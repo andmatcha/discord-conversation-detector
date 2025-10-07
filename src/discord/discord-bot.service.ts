@@ -1,7 +1,8 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Client, Events, GatewayIntentBits } from 'discord.js';
-import * as GetCommand from './commands/get';
+import * as GetCommand from '@/discord/commands/get';
+import { Neo4jService } from '@/neo4j/neo4j.service';
 
 @Injectable()
 export class DiscordBotService implements OnModuleInit, OnModuleDestroy {
@@ -9,7 +10,10 @@ export class DiscordBotService implements OnModuleInit, OnModuleDestroy {
   private readonly token: string;
   private readonly targetChannelId: string;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly neo4jService: Neo4jService,
+  ) {
     this.client = new Client({
       intents: [
         GatewayIntentBits.Guilds,
@@ -54,6 +58,7 @@ export class DiscordBotService implements OnModuleInit, OnModuleDestroy {
             interaction,
             this.client,
             this.targetChannelId,
+            this.neo4jService,
           );
         }
       } catch (e) {

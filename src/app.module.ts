@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from '@/app.controller';
+import { AppService } from '@/app.service';
 import { ConfigModule } from '@nestjs/config';
-import { DiscordBotService } from './discord/discord-bot.service';
+import { DiscordBotService } from '@/discord/discord-bot.service';
+import { Neo4jService } from '@/neo4j/neo4j.service';
 
 @Module({
   imports: [
@@ -11,6 +12,6 @@ import { DiscordBotService } from './discord/discord-bot.service';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, DiscordBotService],
+  providers: [AppService, DiscordBotService, Neo4jService],
 })
 export class AppModule {}
