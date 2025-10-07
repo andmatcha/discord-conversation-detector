@@ -4,6 +4,7 @@ import {
   Client,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Neo4jService } from '@/neo4j/neo4j.service';
 
 export const data = new SlashCommandBuilder()
   .setName('get')
@@ -13,6 +14,7 @@ export async function execute(
   interaction: ChatInputCommandInteraction,
   client: Client,
   targetChannelId: string,
+  neo4j?: Neo4jService,
 ): Promise<void> {
   await interaction.reply({
     content: 'Fetching latest message...',
@@ -40,6 +42,16 @@ export async function execute(
     createdAt: latest.createdAt,
     content: latest.content,
   });
+
+  // プロトタイプ: Neo4jService が供給されていれば保存
+  if (neo4j) {
+    await neo4j.saveMessage({
+      id: latest.id,
+      content: latest.content,
+      createdAtISO: latest.createdAt.toISOString(),
+      username: latest.author?.tag ?? 'unknown',
+    });
+  }
 
   await interaction.followUp({
     content: 'Logged the latest message to server logs.',
