@@ -5,6 +5,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 import { Neo4jService } from '@/neo4j/neo4j.service';
+import { GeminiService } from '@/gemini/gemini.service';
 
 export const data = new SlashCommandBuilder()
   .setName('get')
@@ -15,6 +16,7 @@ export async function execute(
   client: Client,
   targetChannelId: string,
   neo4j?: Neo4jService,
+  gemini?: GeminiService,
 ): Promise<void> {
   await interaction.reply({
     content: 'Fetching latest message...',
@@ -51,6 +53,14 @@ export async function execute(
       createdAtISO: latest.createdAt.toISOString(),
       username: latest.author?.tag ?? 'unknown',
     });
+  }
+
+  // プロトタイプ: GeminiService が供給されていれば要約を実行してログに出力
+  if (gemini) {
+    const summary = await gemini.summarize(latest.content);
+    if (summary) {
+      console.log('[Gemini] Summary:', summary);
+    }
   }
 
   await interaction.followUp({
