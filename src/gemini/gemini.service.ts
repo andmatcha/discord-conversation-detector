@@ -29,6 +29,11 @@ export class GeminiService {
             ],
           },
         ],
+        config: {
+          thinkingConfig: {
+            thinkingBudget: 0, // Disables thinking
+          },
+        },
       });
       // SDKの返却形に応じてtext()を取得
       // 最新SDKでは response.text() ではなく response.text の場合もあるため両対応は不要なら簡素化
