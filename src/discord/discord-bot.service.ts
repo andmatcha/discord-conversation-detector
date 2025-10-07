@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 import * as GetCommand from '@/discord/commands/get';
 import { Neo4jService } from '@/neo4j/neo4j.service';
+import { GeminiService } from '@/gemini/gemini.service';
 
 @Injectable()
 export class DiscordBotService implements OnModuleInit, OnModuleDestroy {
@@ -13,6 +14,7 @@ export class DiscordBotService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly configService: ConfigService,
     private readonly neo4jService: Neo4jService,
+    private readonly geminiService: GeminiService,
   ) {
     this.client = new Client({
       intents: [
@@ -59,6 +61,7 @@ export class DiscordBotService implements OnModuleInit, OnModuleDestroy {
             this.client,
             this.targetChannelId,
             this.neo4jService,
+            this.geminiService,
           );
         }
       } catch (e) {
