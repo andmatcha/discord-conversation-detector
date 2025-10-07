@@ -5,11 +5,14 @@ import neo4j, { Driver } from 'neo4j-driver';
 @Injectable()
 export class Neo4jService implements OnModuleDestroy {
   private driver: Driver | null = null;
+  private readonly databaseName: string;
 
   constructor(private readonly configService: ConfigService) {
     const uri = this.configService.get<string>('NEO4J_URI');
     const username = this.configService.get<string>('NEO4J_USERNAME');
     const password = this.configService.get<string>('NEO4J_PASSWORD');
+    this.databaseName =
+      this.configService.get<string>('NEO4J_DATABASE') ?? 'neo4j';
 
     if (uri && username && password) {
       this.driver = neo4j.driver(uri, neo4j.auth.basic(username, password));
@@ -35,6 +38,7 @@ export class Neo4jService implements OnModuleDestroy {
   }): Promise<void> {
     if (!this.driver) return;
     const session = this.driver.session({
+      database: this.databaseName,
       defaultAccessMode: neo4j.session.WRITE,
     });
     try {
